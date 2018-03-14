@@ -4,6 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <packaging>jar</packaging>
     <groupId>com.codecool.altEnterprise</groupId>
     <artifactId>UserSevice</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -11,6 +12,10 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <hibernate.version>5.2.12.Final</hibernate.version>
+        <postgresql.version>42.1.1</postgresql.version>
+        <appName>shitwish-user</appName>
+        <full-artifact-name>target/${project.artifactId}-${project.version}.jar</full-artifact-name>
     </properties>
 
     <parent>
@@ -32,9 +37,18 @@
         </dependency>
 
         <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>net.sourceforge.nekohtml</groupId>
             <artifactId>nekohtml</artifactId>
             <version>1.9.22</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
     </dependencies>
 
@@ -43,6 +57,34 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.codecool.userservice.UserServiceApp</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.heroku.sdk</groupId>
+                <artifactId>heroku-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <configuration>
+                    <appName>shitwish-user</appName>
+                    <includeTarget>false</includeTarget>
+                    <includes>
+                        <include>${basedir}/${full-artifact-name}</include>
+                    </includes>
+                    <jdkVersion>1.8</jdkVersion>
+                    <processTypes>
+                        <web>java $JAVA_OPTS -Dserver.port=$PORT -jar ${full-artifact-name}</web>
+                    </processTypes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
