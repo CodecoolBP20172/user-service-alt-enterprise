@@ -19,6 +19,10 @@ public class UserService {
 
     // returns with the id of the created user
     public Integer registerUser(User user) {
+        if (userFieldIsEmpty(user.getFirstName()) & userFieldIsEmpty(user.getLastName()) & userFieldIsEmpty(user.getUserName())
+                & userFieldIsEmpty(user.getPassword()) & userFieldIsEmpty(user.getEmail()) & userFieldIsEmpty(user.getCity())) {
+            return null;
+        }
         if (!doesUserExist(user.getUserName())) {
             String hashedPassword = BCrypt.hashpw(user.getPassword(),BCrypt.gensalt());
             user.setPassword(hashedPassword);
@@ -44,8 +48,12 @@ public class UserService {
         return userRepository.findByUserName(userName);
     }
 
-    private boolean userFieldCheckAgainstWhiteSpaces(String field) {
+    // returns with true if the field is empty
+    private boolean userFieldIsEmpty(String field) {
+        if (field.length() == 0) {
+            return true;
+        }
         String cleanedField = field.replaceAll("\\s","");
-        return cleanedField.length() != 0;
+        return cleanedField.length() == 0;
     }
 }
