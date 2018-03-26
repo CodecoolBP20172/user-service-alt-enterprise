@@ -62,8 +62,8 @@ public class UserControllerREST {
     @RequestMapping(value = "user/{userId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteUser(@PathVariable int userId) {
         if (userService.deleteUser(userId)) {
-            return new ResponseEntity<>("success deleting user:"+userId, HttpStatus.OK);
+            return new ResponseEntity<>("Success deleting user:"+userId, HttpStatus.OK);
         }
-        return new ResponseEntity<>("failed to delete user wth id: " + userId + "\n", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Failed to delete user wth id: " + userId + "\n", HttpStatus.BAD_REQUEST);
     }
 }

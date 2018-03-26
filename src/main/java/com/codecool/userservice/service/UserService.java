@@ -45,6 +45,8 @@ public class UserService {
     }
 
     public boolean deleteUser(int userId) {
-        return true;
+        userRepository.delete(userId);
+        User user = userRepository.findOne(userId);
+        return user == null;
     }
 }
