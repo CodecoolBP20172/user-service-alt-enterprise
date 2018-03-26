@@ -25,7 +25,7 @@ public class UserControllerREST {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<Integer> registerUser(@RequestBody Map<String, String> data ){
+    public ResponseEntity registerUser(@RequestBody Map<String, String> data ){
         String firstName = data.get("firstName");
         String lastName = data.get("lastName");
         String email = data.get("email");
@@ -38,8 +38,7 @@ public class UserControllerREST {
         if (response != null){
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
+        return new ResponseEntity<>("Username already taken!",HttpStatus.BAD_REQUEST);
     }
 
 }
