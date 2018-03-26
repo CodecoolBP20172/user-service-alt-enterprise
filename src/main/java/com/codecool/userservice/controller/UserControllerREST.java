@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -41,4 +42,20 @@ public class UserControllerREST {
         return new ResponseEntity<>("Username already taken!",HttpStatus.BAD_REQUEST);
     }
 
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ResponseEntity loginUser(@RequestBody Map<String, String> data){
+        String userName = data.get("userName");
+        String password = data.get("password");
+
+        if (userService.doesUserExist(userName)){
+            if (userService.loginUser(userName, password)){
+                HashMap<String, String> response = new HashMap<>();
+                User temp = userService.getUserByUserName(userName);
+                response.put("userName", temp.getUserName());
+                response.put("userId", String.valueOf(temp.getId()));
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>("Login failed", HttpStatus.BAD_REQUEST);
+    }
 }

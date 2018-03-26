@@ -34,4 +34,13 @@ public class UserService {
         return temp != null;
     }
 
+    public boolean loginUser(String userName, String password){
+        User temp = userRepository.findByUserName(userName);
+        return temp.getPassword().equals(password);
+    }
+
+    public User getUserByUserName(String userName){
+        return userRepository.findByUserName(userName);
+    }
+
 }
