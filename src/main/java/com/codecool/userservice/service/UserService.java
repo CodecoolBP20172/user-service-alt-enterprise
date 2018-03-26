@@ -44,4 +44,8 @@ public class UserService {
         return userRepository.findByUserName(userName);
     }
 
+    private boolean userFieldCheckAgainstWhiteSpaces(String field) {
+        String cleanedField = field.replaceAll("\\s","");
+        return cleanedField.length() != 0;
+    }
 }
