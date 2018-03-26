@@ -19,20 +19,19 @@ public class UserService {
     }
 
     // returns with the id of the created user
-    public int registerUser(User user) {
-        userRepository.save(user);
-        return user.getId();
+    public Integer registerUser(User user) {
+        if (!doesUserExist(user.getUserName())) {
+            userRepository.save(user);
+            return user.getId();
+        }
+        return null;
     }
 
 
     // returns a boolean that indicates whether the user exists or not
     public boolean doesUserExist(String username) {
-        for (User user : userRepository.findAll()) {
-            if (user.getUserName().equals(username)) {
-                return true;
-            }
-        }
-        return false;
+        User temp = userRepository.findByUserName(username);
+        return temp != null;
     }
 
 }

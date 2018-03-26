@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 public class UserControllerREST {
 
@@ -20,6 +22,24 @@ public class UserControllerREST {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ResponseEntity<Integer> registerUser(@RequestBody Map<String, String> data ){
+        String firstName = data.get("firstName");
+        String lastName = data.get("lastName");
+        String email = data.get("email");
+        String userName = data.get("userName");
+        String password = data.get("password");
+        String city = data.get("city");
+
+        User newUser = new User(firstName, lastName, userName, password, email, city, 0);
+        Integer response = userService.registerUser(newUser);
+        if (response != null){
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
     }
 
 }
