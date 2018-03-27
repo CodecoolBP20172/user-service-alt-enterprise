@@ -19,8 +19,7 @@ public class UserService {
 
     // returns with the id of the created user
     public Integer registerUser(User user) {
-        if (userFieldIsEmpty(user.getFirstName()) & userFieldIsEmpty(user.getLastName()) & userFieldIsEmpty(user.getUserName())
-                & userFieldIsEmpty(user.getPassword()) & userFieldIsEmpty(user.getEmail()) & userFieldIsEmpty(user.getCity())) {
+        if (!userFieldValidator(user)) {
             return null;
         }
         if (!doesUserExist(user.getUserName())) {
@@ -55,5 +54,38 @@ public class UserService {
         }
         String cleanedField = field.replaceAll("\\s","");
         return cleanedField.length() == 0;
+    }
+
+    // returns true if the given user's fields hold valid values
+    // checks if names only contains letters and start with uppercase letters
+    // checks if email contains @ and .
+    // checks if fields are empty or if they only contain whitespaces
+    private boolean userFieldValidator(User user) {
+        boolean noFieldIsEmpty = !(userFieldIsEmpty(user.getFirstName())
+                & userFieldIsEmpty(user.getLastName())
+                & userFieldIsEmpty(user.getUserName())
+                & userFieldIsEmpty(user.getPassword())
+                & userFieldIsEmpty(user.getEmail())
+                & userFieldIsEmpty(user.getCity()));
+
+        boolean nameFieldsAreValid = fieldIsName(user.getFirstName())
+                & fieldIsName(user.getLastName())
+                & fieldIsName(user.getCity());
+
+        boolean emailValid = isEmail(user.getEmail());
+
+        return noFieldIsEmpty & nameFieldsAreValid  & emailValid;
+    }
+
+    private boolean isEmail(String email) {
+        return email.matches("(.+)@(.+).(.{2,})");
+    }
+
+    // returns true if the given field is a name
+    // Starts with uppercase and only contains letters
+    private boolean fieldIsName(String field) {
+        boolean firstLetterUppercase = field.valueOf(0).matches("[A-Z]");
+        boolean noNumbers = !field.matches("[0-9]+");
+        return firstLetterUppercase & noNumbers;
     }
 }
