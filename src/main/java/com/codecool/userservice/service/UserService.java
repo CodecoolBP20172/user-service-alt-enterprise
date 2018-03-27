@@ -60,7 +60,7 @@ public class UserService {
     // checks if names only contains letters and start with uppercase letters
     // checks if email contains @ and .
     // checks if fields are empty or if they only contain whitespaces
-    private boolean userFieldValidator(User user) {
+    public boolean userFieldValidator(User user) {
         boolean noFieldIsEmpty = !(userFieldIsEmpty(user.getFirstName())
                 & userFieldIsEmpty(user.getLastName())
                 & userFieldIsEmpty(user.getUserName())
@@ -78,13 +78,14 @@ public class UserService {
     }
 
     private boolean isEmail(String email) {
-        return email.matches("(.+)@(.+).(.{2,})");
+        return email.matches("(.+)[@](.+)[.](.{2,})");
     }
 
     // returns true if the given field is a name
     // Starts with uppercase and only contains letters
     private boolean fieldIsName(String field) {
-        boolean firstLetterUppercase = field.valueOf(0).matches("[A-Z]");
+        Character ch = field.charAt(0);
+        boolean firstLetterUppercase = Character.isUpperCase(ch);
         boolean noNumbers = !field.matches("[0-9]+");
         return firstLetterUppercase & noNumbers;
     }
