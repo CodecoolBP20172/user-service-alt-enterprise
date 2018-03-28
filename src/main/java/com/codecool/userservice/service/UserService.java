@@ -38,6 +38,11 @@ public class UserService {
         return temp != null;
     }
 
+    public boolean doesUserExist(Integer userId) {
+        User temp = getUserById(userId);
+        return temp != null;
+    }
+
     public boolean loginUser(String userName, String password) {
         User temp = userRepository.findByUserName(userName);
         return BCrypt.checkpw(password, temp.getPassword());
@@ -98,5 +103,9 @@ public class UserService {
         boolean firstLetterUppercase = Character.isUpperCase(ch);
         boolean noNumbers = !field.matches("[0-9]+");
         return firstLetterUppercase & noNumbers;
+    }
+
+    public void updateUser (User userToUpdate) {
+        userRepository.save(userToUpdate);
     }
 }
