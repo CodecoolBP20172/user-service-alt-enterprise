@@ -1,5 +1,6 @@
 package com.codecool.userservice.service;
 
+import com.codecool.userservice.customException.UserNameAlreadyTakenException;
 import com.codecool.userservice.model.User;
 import com.codecool.userservice.repository.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
@@ -18,17 +19,17 @@ public class UserService {
     }
 
     // returns with the id of the created user
-    public Integer registerUser(User user) {
+    public Integer registerUser(User user) throws IllegalArgumentException, UserNameAlreadyTakenException {
         if (!userFieldValidator(user)) {
-            return null;
+            throw new IllegalArgumentException();
         }
-        if (!doesUserExist(user.getUserName())) {
-            String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-            user.setPassword(hashedPassword);
-            userRepository.save(user);
-            return user.getId();
+        if (doesUserExist(user.getUserName())) {
+            throw new UserNameAlreadyTakenException();
         }
-        return null;
+        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setPassword(hashedPassword);
+        userRepository.save(user);
+        return user.getId();
     }
 
 
@@ -105,7 +106,7 @@ public class UserService {
         return firstLetterUppercase & noNumbers;
     }
 
-    public void updateUser (User userToUpdate) {
+    public void updateUser(User userToUpdate) {
         userRepository.save(userToUpdate);
     }
 }

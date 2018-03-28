@@ -10,6 +10,10 @@ public class InitializerBean {
 
     public InitializerBean(UserService userService) throws ParseException {
         User user1 = new User("Dezső", "Kosztolányi", "dktheprime", "pa55w0rd", "dkdezs@nyugat.hu", "Budapest", 1000000);
-        userService.registerUser(user1);
+        try {
+            Integer userId = userService.registerUser(user1);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }

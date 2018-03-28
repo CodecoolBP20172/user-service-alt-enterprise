@@ -1,8 +1,8 @@
 package com.codecool.userservice.controller;
 
+import com.codecool.userservice.customException.UserNameAlreadyTakenException;
 import com.codecool.userservice.model.User;
 import com.codecool.userservice.service.UserService;
-import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +20,14 @@ public class UserControllerREST {
     @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
     public ResponseEntity<User> userById(@PathVariable int userId) {
         User user = userService.getUserById(userId);
-        if (user == null){
+        if (user == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity registerUser(@RequestBody Map<String, String> data ){
+    public ResponseEntity registerUser(@RequestBody Map<String, String> data) {
         String firstName = data.get("firstName");
         String lastName = data.get("lastName");
         String email = data.get("email");
@@ -36,21 +36,24 @@ public class UserControllerREST {
         String city = data.get("city");
 
         User newUser = new User(firstName, lastName, userName, password, email, city, 0);
-        Integer response = userService.registerUser(newUser);
-        if (response != null){
-            return new ResponseEntity<>(response, HttpStatus.OK);
+        Integer userId;
+        try {
+            userId = userService.registerUser(newUser);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>("Invalid user data!", HttpStatus.BAD_REQUEST);
+        } catch (UserNameAlreadyTakenException ex) {
+            return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
         }
-//        return new ResponseEntity<>("Username already taken!", HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>("Username already taken!",HttpStatus.OK);
+        return new ResponseEntity<>(userId, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity loginUser(@RequestBody Map<String, String> data){
+    public ResponseEntity loginUser(@RequestBody Map<String, String> data) {
         String userName = data.get("userName");
         String password = data.get("password");
 
-        if (userService.doesUserExist(userName)){
-            if (userService.loginUser(userName, password)){
+        if (userService.doesUserExist(userName)) {
+            if (userService.loginUser(userName, password)) {
                 HashMap<String, String> response = new HashMap<>();
                 User temp = userService.getUserByUserName(userName);
                 response.put("userName", temp.getUserName());
@@ -70,7 +73,7 @@ public class UserControllerREST {
     }
 
     @RequestMapping(value = "user/{userId}", method = RequestMethod.POST)
-    public ResponseEntity updateBalance (@RequestBody Map<String, String> data , @PathVariable int userId) {
+    public ResponseEntity updateBalance(@RequestBody Map<String, String> data, @PathVariable int userId) {
         User currentUser = userService.getUserById(userId);
         if (currentUser != null) {
             Integer balanceChange = Integer.parseInt(data.get("value"));
@@ -78,6 +81,6 @@ public class UserControllerREST {
             userService.updateUser(currentUser);
             return new ResponseEntity<>("Updated balance for user:" + userId, HttpStatus.OK);
         }
-            return new ResponseEntity<>("Failed User Balance Update : User not found", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Failed User Balance Update : User not found", HttpStatus.BAD_REQUEST);
     }
 }
