@@ -2,6 +2,7 @@ package com.codecool.userservice.controller;
 
 import com.codecool.userservice.model.User;
 import com.codecool.userservice.service.UserService;
+import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,5 +67,17 @@ public class UserControllerREST {
             return new ResponseEntity<>("Success deleting user:" + userId, HttpStatus.OK);
         }
         return new ResponseEntity<>("Failed to delete user with id: " + userId + "\n", HttpStatus.BAD_REQUEST);
+    }
+
+    @RequestMapping(value = "user/{userId}", method = RequestMethod.POST)
+    public ResponseEntity updateBalance (@RequestBody Map<String, String> data , @PathVariable int userId) {
+        User currentUser = userService.getUserById(userId);
+        if (currentUser != null) {
+            Integer balanceChange = Integer.parseInt(data.get("value"));
+            currentUser.setBalance(currentUser.getBalance() + balanceChange);
+            userService.updateUser(currentUser);
+            return new ResponseEntity<>("Updated balance for user:" + userId, HttpStatus.OK);
+        }
+            return new ResponseEntity<>("Failed User Balance Update : User not found", HttpStatus.BAD_REQUEST);
     }
 }
