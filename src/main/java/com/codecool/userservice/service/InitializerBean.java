@@ -9,7 +9,7 @@ import java.text.ParseException;
 public class InitializerBean {
 
     public InitializerBean(UserService userService) throws ParseException {
-        User user1 = new User("Dezső", "Kosztolányi", "dktheprime", "pa55w0rd", "dkdezs@nyugat.hu", "Budapest", 18);
+        User user1 = new User("Dezső", "Kosztolányi", "dktheprime", "pa55w0rd", "dkdezs@nyugat.hu", "Budapest", 1000000);
         userService.registerUser(user1);
     }
 }
