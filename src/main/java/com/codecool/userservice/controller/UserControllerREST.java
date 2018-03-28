@@ -3,6 +3,7 @@ package com.codecool.userservice.controller;
 import com.codecool.userservice.model.User;
 import com.codecool.userservice.service.UserService;
 import com.sun.org.apache.regexp.internal.RE;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,15 +28,17 @@ public class UserControllerREST {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity registerUser(@RequestBody Map<String, String> data ){
-        String firstName = data.get("firstName");
-        String lastName = data.get("lastName");
-        String email = data.get("email");
-        String userName = data.get("userName");
-        String password = data.get("password");
-        String city = data.get("city");
+    public ResponseEntity registerUser(@RequestBody String data ){
+        JSONObject jsonObject = new JSONObject(data);
+        String firstName = jsonObject.getString("firstName");
+        String lastName = jsonObject.getString("lastName");
+        String userName = jsonObject.getString("userName");
+        String password = jsonObject.getString("password");
+        String email = jsonObject.getString("email");
+        String city = jsonObject.getString("city");
 
         User newUser = new User(firstName, lastName, userName, password, email, city, 0);
+
         Integer response = userService.registerUser(newUser);
         if (response != null){
             return new ResponseEntity<>(response, HttpStatus.OK);
